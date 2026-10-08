@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Vistas de Caberti: regalos, detalles y productos personalizados en Tapachula."
+    />
+    <meta name="theme-color" content="#a84732" />
+    <title>Sobre Caberti y contacto | Caberti</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/data.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body data-page="contacto" data-admin="false">
+    <a class="skip-link" href="#contenido">Saltar al contenido</a
+    ><noscript
+      ><div class="noscript">
+        Activa JavaScript para ver los productos y probar las interacciones de
+        demostración.
+      </div></noscript
+    >
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Caberti, inicio"
+          >CABERTI <span data-icon="bow" aria-hidden="true"></span
+        ></a>
+        <nav class="nav" id="main-nav" aria-label="Navegación principal">
+          <a href="index.html">Inicio</a><a href="catalogo.html">Catálogo</a
+          ><a href="personalizados.html">Personalizados</a
+          ><a href="contacto.html" aria-current="page">Contacto</a>
+        </nav>
+        <a class="cart-link" href="pedido.html"
+          ><span data-icon="bag" aria-hidden="true"></span
+          ><span class="cart-text">Mi pedido</span
+          ><span class="cart-count" data-cart-count>0</span></a
+        ><button
+          class="menu-toggle"
+          id="menu-toggle"
+          aria-controls="main-nav"
+          aria-expanded="false"
+          aria-label="Abrir menú"
+        >
+          <span data-icon="menu" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+    <div class="demo-public">
+      Vista de demostración · Fotografías de Caberti · Nombres, precios y
+      existencias por confirmar
+    </div>
+    <main id="contenido">
+      <div class="container">
+        <div class="page-head">
+          <p class="eyebrow">Cerca de tus momentos</p>
+          <h1>Hablemos de tu próximo regalo.</h1>
+        </div>
+        <div class="contact-grid">
+          <div>
+            <h2>Somos Caberti</h2>
+            <p class="muted">
+              Un emprendimiento de Tapachula que reúne regalos, accesorios y
+              detalles personalizados para acompañar tus ocasiones especiales.
+            </p>
+            <p class="muted">
+              Te ayudamos a elegir un producto, darle un toque personal y
+              acordar su entrega.
+            </p>
+            <div class="contact-card">
+              <span data-icon="pin" aria-hidden="true"></span>
+              <div>
+                <strong>Tapachula, Chiapas</strong>
+                <p>Consulta las zonas y el costo de entrega.</p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span data-icon="chat" aria-hidden="true"></span>
+              <div>
+                <strong>Atención por WhatsApp</strong>
+                <p>Número comercial pendiente de configurar.</p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span data-icon="truck" aria-hidden="true"></span>
+              <div>
+                <strong>Entrega a domicilio</strong>
+                <p>Disponibilidad y fecha acordadas con cada pedido.</p>
+              </div>
+            </div>
+            <button
+              class="layout-2 btn btn-green"
+              type="button"
+              data-contact-preview
+            >
+              Preparar mensaje
+              <span data-icon="arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <img
+            class="layout-3 about-photo"
+            src="assets/productos/18.jpg"
+            alt="Espacio de Caberti"
+          />
+        </div>
+        <section class="faq">
+          <h2>Lo que quizá te preguntas</h2>
+          <details>
+            <summary>¿Cómo hago un pedido?</summary>
+            <p>
+              Explora el catálogo, agrega los productos y prepara tu solicitud.
+              En la versión final se podrá continuar por WhatsApp; en esta
+              demostración puedes copiar el mensaje.
+            </p>
+          </details>
+          <details>
+            <summary>¿Puedo personalizar un producto?</summary>
+            <p>
+              Busca los artículos marcados como personalizables y describe tu
+              idea. Las opciones y el costo final se confirman con Caberti.
+            </p>
+          </details>
+          <details>
+            <summary>¿Cuánto cuesta la entrega?</summary>
+            <p>
+              Depende de la zona y del pedido. El costo se acuerda antes de
+              confirmar la compra.
+            </p>
+          </details>
+          <details>
+            <summary>¿Necesito crear una cuenta?</summary>
+            <p>
+              No. Puedes explorar los productos y preparar una consulta sin
+              registrarte.
+            </p>
+          </details>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-main">
+          <a class="brand" href="index.html" aria-label="Caberti, inicio"
+            >CABERTI <span data-icon="bow" aria-hidden="true"></span></a
+          ><span class="muted small"
+            >Detalles que cuentan una historia. Tapachula, Chiapas.</span
+          >
+          <nav class="footer-links" aria-label="Enlaces del pie">
+            <a href="catalogo.html">Catálogo</a
+            ><a href="contacto.html">Contacto</a
+            ><a href="acceso.html">Administración</a>
+          </nav>
+        </div>
+        <div class="footer-note">
+          <span>Propuesta de interfaz · CABERTI</span
+          ><span
+            >Precios y datos de ejemplo. Sin compras ni envíos reales.</span
+          >
+        </div>
+      </div>
+    </footer>
+    <dialog class="modal" id="request-dialog" aria-labelledby="request-title">
+      <button class="close" type="button" data-close-dialog aria-label="Cerrar">
+        ×
+      </button>
+      <p class="eyebrow">Demostración</p>
+      <h2 id="request-title">Tu solicitud</h2>
+      <p class="muted small">
+        Este es el mensaje que se prepararía para WhatsApp. No se ha enviado ni
+        registrado ningún pedido. Falta configurar el número comercial de
+        Caberti.
+      </p>
+      <label class="field"
+        >Mensaje<textarea id="request-message" readonly></textarea></label
+      ><button class="btn btn-green" id="copy-request" type="button">
+        Copiar mensaje
+      </button>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>
