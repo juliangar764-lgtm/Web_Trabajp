@@ -1,5 +1,4 @@
--- Datos de demostración (tomados de la versión anterior de js/data.js).
--- Los precios, existencias y pedidos son ejemplos, no datos reales del negocio.
+-- Catálogo inicial de Caberti: categorías y productos. No incluye pedidos ni movimientos.
 
 -- No se tocan las cuentas (clientes) ni las sesiones.
 TRUNCATE imagenes_producto, detalle_pedido, pedidos, movimientos_inventario, productos, categorias RESTART IDENTITY CASCADE;
@@ -29,19 +28,3 @@ INSERT INTO productos (id, nombre, categoria_id, precio, existencias, minimo, pe
   (15, 'Lámpara esfera', 1, 340, 6, 3, FALSE, FALSE, 'Un detalle para una ocasión especial. Consulta las opciones y disponibilidad con Caberti antes de confirmar tu pedido.', ARRAY['assets/productos/17.jpg']),
   (16, 'Placa conmemorativa', 2, 190, 6, 3, TRUE, FALSE, 'Un detalle para una ocasión especial. Consulta las opciones y disponibilidad con Caberti antes de confirmar tu pedido.', ARRAY['assets/productos/01.jpg']);
 SELECT setval(pg_get_serial_sequence('productos', 'id'), (SELECT MAX(id) FROM productos));
-
-INSERT INTO movimientos_inventario (producto_id, cantidad, motivo, creado_en) VALUES
-  (2, 10, 'Reposición de mercancía', '2026-10-08 10:00'),
-  (3, -1, 'Venta de ejemplo', '2026-10-07 12:00');
-
-INSERT INTO pedidos (id, cliente, direccion, entrega, notas, estado, envio, aplicado, creado_en) OVERRIDING SYSTEM VALUE VALUES
-  (104, 'Mariana López', 'Dirección pendiente de confirmar', 'domicilio', 'Confirmar horario con el cliente.', 'Pendiente', NULL, FALSE, '2026-10-08 10:30'),
-  (103, 'Luis Pérez', 'Punto de entrega por acordar', 'recoger', '', 'Confirmado', 0, TRUE, '2026-10-08 09:00'),
-  (102, 'Ana Ruiz', 'Dirección de ejemplo', 'domicilio', '', 'En preparación', 0, TRUE, '2026-10-07 13:00');
-SELECT setval(pg_get_serial_sequence('pedidos', 'id'), (SELECT MAX(id) FROM pedidos));
-
-INSERT INTO detalle_pedido (pedido_id, producto_id, nombre, cantidad, precio, personalizacion) VALUES
-  (104, 2, 'Termo personalizado', 1, 280, 'Nombre: Sofía · Color: crema'),
-  (104, 3, 'Dije personalizado', 1, 180, ''),
-  (103, 1, 'Caja de regalo', 1, 450, 'Cumpleaños · Tarjeta con dedicatoria'),
-  (102, 2, 'Termo personalizado', 1, 280, 'Nombre: Ana');

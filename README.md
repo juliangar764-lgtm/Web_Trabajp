@@ -26,7 +26,7 @@ Tienda con catálogo, cuentas de cliente, pedidos por WhatsApp y panel de admini
 2. Crea la base de datos: `createdb -U postgres caberti`
 3. Copia `.env.example` a `.env` y completa `DATABASE_URL` (usuario y contraseña) y `WHATSAPP_NUMBER`.
 4. `npm install`
-5. `npm run db:init -- --seed` crea las tablas y carga datos de demostración. Sin `--seed` solo crea las tablas; **`--seed` reemplaza productos, categorías, pedidos e inventario** (no toca las cuentas). `npm run db:reset` borra todo, incluidas las cuentas, y vuelve a crear con datos de demostración.
+5. `npm run db:init -- --seed` crea las tablas y carga el catálogo inicial. Sin `--seed` solo crea las tablas; **`--seed` reemplaza productos, categorías, pedidos e inventario** (no toca las cuentas). `npm run db:reset` borra todo, incluidas las cuentas, y vuelve a crear con datos de demostración.
 6. Crea tu cuenta de administrador: `npm run admin:crear -- correo@dominio.com "Tu nombre"` (pide la contraseña sin mostrarla; si el correo ya existe, lo convierte en administrador y cambia su contraseña).
 7. `npm run dev` y abre http://localhost:3000
 
@@ -76,6 +76,6 @@ Seguridad incluida: contraseñas con scrypt, sesiones con token aleatorio guarda
 
 ## Pendiente
 
-- Los productos, precios y existencias que carga `--seed` son de ejemplo: hay que reemplazarlos con los datos reales de Caberti desde el panel de administración.
+- Revisa precios y existencias del catálogo inicial (`--seed`) desde el panel de administración.
 - No hay recuperación de contraseña ni verificación de correo.
 - No hay pagos en línea ni correos automáticos.

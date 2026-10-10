@@ -1,6 +1,6 @@
 // Crea las tablas de la base de datos.
 //   --reset  borra TODAS las tablas del proyecto (incluidas las cuentas de clientes y las antiguas en inglés)
-//   --seed   carga los datos de demostración (reemplaza los datos existentes)
+//   --seed   carga el catálogo inicial (reemplaza los datos existentes)
 const fs = require("node:fs");
 const path = require("node:path");
 const { pool } = require("../src/config/db");
