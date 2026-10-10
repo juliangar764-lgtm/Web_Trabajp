@@ -38,6 +38,14 @@
     account.querySelector(".account-exit")?.addEventListener("click", () => C.logout());
     cartLink.before(account);
   }
+  // Para agregar al pedido o personalizar hace falta una cuenta: se manda a crearla
+  // (la página de registro ofrece iniciar sesión) y después se vuelve a esta misma página.
+  function requireAccount() {
+    if (C.state.user) return true;
+    const back = (location.pathname.slice(1) || "index.html") + location.search;
+    location.href = "/registro.html?siguiente=" + encodeURIComponent(back);
+    return false;
+  }
   function count() {
     document
       .querySelectorAll("[data-cart-count]")
@@ -60,7 +68,7 @@
       note ||
       (url
         ? "Revisa el mensaje y ábrelo en WhatsApp para enviarlo a Caberti."
-        : "El número de WhatsApp de Caberti aún no está configurado. Copia el mensaje y envíalo por tu cuenta.");
+        : "El número de WhatsApp de Caberti aún no está configurado. Selecciona el mensaje y envíalo por tu cuenta.");
     let link = $("#open-whatsapp");
     if (!link) {
       link = document.createElement("a");
@@ -69,7 +77,7 @@
       link.target = "_blank";
       link.rel = "noopener";
       link.textContent = "Abrir WhatsApp";
-      $("#copy-request").before(link);
+      $("#request-message").closest("label").after(link);
     }
     link.hidden = !url;
     if (url) link.href = url;
@@ -78,17 +86,6 @@
   $("[data-close-dialog]")?.addEventListener("click", () =>
     $("#request-dialog").close(),
   );
-  $("#copy-request")?.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText($("#request-message").value);
-      C.toast("Mensaje copiado.");
-    } catch (_) {
-      $("#request-message").select();
-      C.toast(
-        "Selecciona y copia el mensaje con Ctrl+C o desde el menú de tu dispositivo.",
-      );
-    }
-  });
   if (page === "inicio")
     $("#featured").innerHTML = C.state.products
       .filter((p) => p.active && p.featured)
@@ -200,6 +197,7 @@
     );
     $("#product-form").addEventListener("submit", (ev) => {
       ev.preventDefault();
+      if (!requireAccount()) return;
       const qty = Number($("#product-qty").value),
         custom = [
           $("#custom-text")?.value.trim(),
@@ -356,8 +354,10 @@
     });
     render();
   }
+  if (page === "personalizados" && !requireAccount()) return;
   $("#custom-request-form")?.addEventListener("submit", (ev) => {
     ev.preventDefault();
+    if (!requireAccount()) return;
     const data = new FormData(ev.currentTarget);
     preview(
       `Hola, Caberti. Quiero armar un detalle personalizado.\nOcasión: ${data.get("occasion")}\nPresupuesto aproximado: ${data.get("budget") || "Por acordar"}\nMi idea: ${data.get("idea")}\nNombre: ${data.get("name")}\nContacto: ${data.get("phone")}`,

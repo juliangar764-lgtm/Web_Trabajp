@@ -477,22 +477,6 @@ small,
   left: 12px;
   background: var(--white);
 }
-.banner {
-  background: var(--blush);
-  padding: 45px 50px;
-  border-radius: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 35px;
-}
-.banner p {
-  color: var(--muted);
-  margin-bottom: 0;
-}
-.banner h2 {
-  max-width: 560px;
-}
 .site-footer {
   border-top: 1px solid var(--line);
   margin-top: 55px;
@@ -1512,16 +1496,6 @@ td small {
     left: 6px;
     top: 6px;
     padding: 3px 7px;
-  }
-  .banner {
-    padding: 28px;
-    display: block;
-  }
-  .banner h2 {
-    font-size: 31px;
-  }
-  .banner .btn {
-    margin-top: 25px;
   }
   .footer-main {
     align-items: flex-start;
