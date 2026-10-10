@@ -1,0 +1,20 @@
+{
+  "name": "caberti",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tienda Caberti: Node.js, Express y PostgreSQL con patrón MVC",
+  "main": "src/server.js",
+  "engines": { "node": ">=20.6" },
+  "scripts": {
+    "start": "node src/server.js",
+    "start:local": "node --env-file=.env src/server.js",
+    "dev": "node --env-file=.env --watch src/server.js",
+    "admin:crear": "node --env-file=.env database/crear-admin.js",
+    "db:init": "node --env-file=.env database/init.js",
+    "db:reset": "node --env-file=.env database/init.js --reset --seed"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pg": "^8.13.0"
+  }
+}

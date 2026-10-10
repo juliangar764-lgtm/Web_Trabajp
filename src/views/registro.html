@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Crear cuenta | Caberti</title>
+
+  <link rel="stylesheet" href="css/login.css">
+  <script src="js/registro.js" defer></script>
+</head>
+
+<body>
+  <main class="login-layout">
+
+    <!-- Presentación -->
+    <section class="login-art" aria-label="Caberti">
+      <a class="brand" href="index.html">
+        CABERTI
+      </a>
+
+      <div
+        class="hero-photo"
+        role="img"
+        aria-label="Lámpara corazón de Caberti"
+      ></div>
+
+      <p class="brand-message">
+        Pequeños detalles para grandes momentos.
+      </p>
+    </section>
+
+    <!-- Formulario -->
+    <section class="login-form" aria-labelledby="login-title">
+      <div class="login-box">
+
+        <span class="badge">Nueva cuenta</span>
+
+        <h1 id="login-title">Crea tu cuenta</h1>
+
+        <p class="description">
+          Con tu cuenta puedes enviar pedidos a Caberti y darles seguimiento.
+        </p>
+
+        <form id="register-form" novalidate>
+
+          <label class="field" for="nombre">Nombre</label>
+          <input class="form-input" id="nombre" name="nombre" type="text"
+            placeholder="¿Cómo te llamas?" autocomplete="name" maxlength="120" required>
+
+          <label class="field" for="correo">Correo electrónico</label>
+          <input class="form-input" id="correo" name="correo" type="email"
+            placeholder="Tu correo electrónico" autocomplete="email" maxlength="254" required>
+
+          <label class="field" for="telefono">WhatsApp</label>
+          <input class="form-input" id="telefono" name="telefono" type="tel"
+            placeholder="Tu número de WhatsApp (10 dígitos)" autocomplete="tel" maxlength="30" required>
+
+          <label class="field" for="password">Contraseña</label>
+          <div class="password-field">
+            <input class="form-input" id="password" name="password" type="password"
+              placeholder="Mínimo 8 caracteres" autocomplete="new-password"
+              minlength="8" maxlength="100" required>
+            <button class="password-toggle" id="mostrar-password" type="button"
+              aria-label="Mostrar contraseña" aria-controls="password" aria-pressed="false">
+              Mostrar
+            </button>
+          </div>
+
+          <label class="field" for="password2">Repite la contraseña</label>
+          <input class="form-input" id="password2" name="password2" type="password"
+            placeholder="Escríbela otra vez" autocomplete="new-password" maxlength="100" required>
+
+          <p class="form-error" id="login-error" role="alert" hidden></p>
+
+          <button class="login-button" type="submit">
+            Crear cuenta
+            <span aria-hidden="true">→</span>
+          </button>
+
+        </form>
+
+        <p class="alt-link">
+          ¿Ya tienes cuenta?
+          <a id="login-link" href="acceso.html">Inicia sesión</a>
+        </p>
+
+        <a class="back-link" href="index.html">
+          <span aria-hidden="true">←</span>
+          Volver a la tienda
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

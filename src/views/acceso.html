@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Iniciar sesión | Caberti</title>
+
+  <link rel="stylesheet" href="css/login.css">
+  <script src="js/login.js" defer></script>
+</head>
+
+<body>
+  <main class="login-layout">
+
+    <!-- Presentación -->
+    <section class="login-art" aria-label="Caberti">
+      <a class="brand" href="index.html">
+        CABERTI
+      </a>
+
+      <div
+        class="hero-photo"
+        role="img"
+        aria-label="Lámpara corazón de Caberti"
+      ></div>
+
+      <p class="brand-message">
+        Pequeños detalles para grandes momentos.
+      </p>
+    </section>
+
+    <!-- Formulario -->
+    <section class="login-form" aria-labelledby="login-title">
+      <div class="login-box">
+
+        <span class="badge">Mi cuenta</span>
+
+        <h1 id="login-title">Inicia sesión</h1>
+
+        <p class="description">
+          Entra para enviar tus pedidos a Caberti. Si administras la
+          tienda, aquí también accedes al panel.
+        </p>
+
+        <form id="login-form" novalidate>
+
+          <label class="field" for="correo">
+            Correo electrónico
+          </label>
+
+          <input
+            class="form-input"
+            id="correo"
+            name="correo"
+            type="email"
+            placeholder="Tu correo electrónico"
+            autocomplete="email"
+            required
+          >
+
+          <label class="field" for="password">
+            Contraseña
+          </label>
+
+          <div class="password-field">
+            <input
+              class="form-input"
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Tu contraseña"
+              autocomplete="current-password"
+              required
+            >
+
+            <button
+              class="password-toggle"
+              id="mostrar-password"
+              type="button"
+              aria-label="Mostrar contraseña"
+              aria-controls="password"
+              aria-pressed="false"
+            >
+              Mostrar
+            </button>
+          </div>
+
+          <p class="form-error" id="login-error" role="alert" hidden></p>
+
+          <button class="login-button" type="submit">
+            Entrar
+            <span aria-hidden="true">→</span>
+          </button>
+
+        </form>
+
+        <p class="alt-link">
+          ¿Aún no tienes cuenta?
+          <a id="register-link" href="registro.html">Crea una cuenta</a>
+        </p>
+
+        <a class="back-link" href="index.html">
+          <span aria-hidden="true">←</span>
+          Volver a la tienda
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

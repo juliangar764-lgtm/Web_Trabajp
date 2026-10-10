@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Vistas de Caberti: regalos, detalles y productos personalizados en Tapachula."
+    />
+    <meta name="theme-color" content="#a84732" />
+    <title>Categorías | Caberti</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <script src="../js/data.js" defer></script>
+    <script src="../js/admin.js" defer></script>
+  </head>
+  <body data-page="categorias" data-admin="true">
+    <a class="skip-link" href="#contenido">Saltar al contenido</a
+    ><noscript
+      ><div class="noscript">
+        Activa JavaScript para ver los productos y usar la tienda.
+      </div></noscript
+    >
+    <div class="admin-shell">
+      <aside class="sidebar">
+        <a class="brand" href="../index.html" aria-label="Caberti, inicio"
+          >CABERTI <span data-icon="bow" aria-hidden="true"></span
+        ></a>
+        <div class="sidebar-label">Administración · vistas</div>
+        <nav class="side-nav" aria-label="Administración">
+          <a href="index.html"
+            ><span data-icon="chart" aria-hidden="true"></span>Resumen</a
+          ><a href="productos.html"
+            ><span data-icon="box" aria-hidden="true"></span>Productos</a
+          ><a href="categorias.html" aria-current="page"
+            ><span data-icon="tag" aria-hidden="true"></span>Categorías</a
+          ><a href="inventario.html"
+            ><span data-icon="box" aria-hidden="true"></span>Inventario</a
+          ><a href="pedidos.html"
+            ><span data-icon="list" aria-hidden="true"></span>Pedidos</a
+          >
+        </nav>
+        <div class="side-bottom">
+          <a href="../index.html"
+            ><span data-icon="home" aria-hidden="true"></span>Ver tienda</a
+          ><a href="../acceso.html"
+            ><span data-icon="exit" aria-hidden="true"></span>Salir de la
+            demo</a
+          >
+        </div>
+      </aside>
+      <main class="admin-main" id="contenido">
+        <div class="admin-top">
+          <h1>Categorías</h1>
+          <div class="admin-user">
+            <span class="avatar"
+              ><span data-icon="user" aria-hidden="true"></span></span
+            >Administrador
+          </div>
+        </div>
+        <div class="demo-strip">
+          <span
+            ><strong>Panel de administración.</strong> Los cambios se guardan en la base de datos.</span
+          ><button class="text-link" type="button" id="logout">
+            Cerrar sesión
+          </button>
+        </div>
+        <div class="admin-grid">
+          <section>
+            <div class="table-wrap" id="categories-table"></div>
+          </section>
+          <form class="panel" id="category-form">
+            <h2 id="category-title">Nueva categoría</h2>
+            <input type="hidden" name="original" /><label class="field"
+              >Nombre *<input
+                name="name"
+                maxlength="80"
+                required
+                placeholder="Ej. Regalos y detalles" /></label
+            ><button class="btn full">Guardar categoría</button
+            ><button
+              type="button"
+              class="layout-7 text-link"
+              id="cancel-category"
+            >
+              Limpiar formulario
+            </button>
+            <p class="note">
+              Agrupa los productos para facilitar la búsqueda en el catálogo.
+            </p>
+          </form>
+        </div>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>

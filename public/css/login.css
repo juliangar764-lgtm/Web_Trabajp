@@ -1,0 +1,332 @@
+/* Colores del login */
+
+:root {
+  --fondo: #fbf7f1;
+  --texto: #30241f;
+  --secundario: #776c66;
+  --principal: #a84732;
+  --principal-hover: #843322;
+  --borde: #ded2c7;
+  --suave: #f3e5dd;
+}
+
+/* Configuración general */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.login-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Presentación e imagen */
+
+.login-art {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+  padding: 55px;
+  background: var(--suave);
+}
+
+.brand {
+  align-self: flex-start;
+  color: var(--texto);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  letter-spacing: 5px;
+  text-decoration: none;
+}
+
+.hero-photo {
+  flex: 1;
+  min-height: 420px;
+  border-radius: 90px 16px 16px 16px;
+  background-color: #e5d3c5;
+  background-image: url("../assets/productos/07.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+.brand-message {
+  margin: 0;
+  color: var(--secundario);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.5;
+}
+
+/* Contenedor del formulario */
+
+.login-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 55px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 400px;
+}
+
+.badge {
+  display: inline-block;
+  margin-bottom: 22px;
+  padding: 7px 13px;
+  border-radius: 20px;
+  background: var(--suave);
+  color: var(--principal);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+h1 {
+  margin: 0 0 18px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 46px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.description {
+  margin: 0 0 30px;
+  color: var(--secundario);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Campos */
+
+.field {
+  display: block;
+  margin: 20px 0 9px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: #fffdfa;
+  color: var(--texto);
+  font-size: 16px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.form-input::placeholder {
+  color: #8b8078;
+}
+
+.form-input:focus {
+  border-color: var(--principal);
+  box-shadow: 0 0 0 3px rgb(168 71 50 / 12%);
+  outline: none;
+}
+
+/* Mostrar u ocultar contraseña */
+
+.password-field {
+  position: relative;
+}
+
+.password-field .form-input {
+  padding-right: 95px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  padding: 9px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--principal);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  background: var(--suave);
+}
+
+/* Aviso de demostración */
+
+.demo-note {
+  margin: 18px 0 22px;
+  color: var(--secundario);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Botón de entrada */
+
+.login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 22px;
+  border: 1px solid var(--principal);
+  border-radius: 8px;
+  background: var(--principal);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.login-button:hover {
+  border-color: var(--principal-hover);
+  background: var(--principal-hover);
+}
+
+/* Volver al inicio */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+  color: var(--principal);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  border-bottom-color: var(--principal);
+}
+
+/* Navegación con teclado */
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--principal);
+  outline-offset: 4px;
+}
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+  .login-art,
+  .login-form {
+    padding: 35px;
+  }
+
+  h1 {
+    font-size: 39px;
+  }
+
+  .brand-message {
+    font-size: 18px;
+  }
+}
+
+/* Celular */
+
+@media (max-width: 700px) {
+  .login-layout {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+
+  .login-art {
+    gap: 0;
+    padding: 30px 25px;
+    background: var(--fondo);
+  }
+
+  .brand {
+    font-size: 28px;
+  }
+
+  .hero-photo,
+  .brand-message {
+    display: none;
+  }
+
+  .login-form {
+    padding: 20px 25px 50px;
+  }
+
+  .login-box {
+    max-width: 440px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+}
+
+/* Preferencia de movimiento reducido */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+/* Errores del formulario y enlace alterno */
+
+.form-error {
+  margin: 14px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid #d9a79b;
+  border-radius: 8px;
+  background: #fbeae6;
+  color: #7a2a1a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form-error[hidden] {
+  display: none;
+}
+
+.alt-link {
+  margin: 22px 0 0;
+  color: var(--secundario);
+  font-size: 14px;
+}
+
+.alt-link a {
+  color: var(--principal);
+  font-weight: 600;
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
