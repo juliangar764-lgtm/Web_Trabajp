@@ -76,6 +76,6 @@ Seguridad incluida: contraseñas con scrypt, sesiones con token aleatorio guarda
 
 ## Pendiente
 
-- El sitio sigue mostrando productos, nombres, precios y existencias de demostración, y los avisos "Vista de demostración" en el encabezado de cada página: hay que reemplazarlos con los datos reales de Caberti.
+- Los productos, precios y existencias que carga `--seed` son de ejemplo: hay que reemplazarlos con los datos reales de Caberti desde el panel de administración.
 - No hay recuperación de contraseña ni verificación de correo.
 - No hay pagos en línea ni correos automáticos.
