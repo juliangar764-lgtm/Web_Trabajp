@@ -10,7 +10,7 @@ if (!whatsappNumber) {
   console.warn("Aviso: WHATSAPP_NUMBER no está definido o no es válido; los enlaces de WhatsApp quedarán desactivados.");
 }
 
-const server = app.listen(port, () => console.log(`Caberti disponible en http://localhost:${port}`));
+const server = app.listen(port, () => console.log(`CabertiStack disponible en http://localhost:${port}`));
 
 // Cierre ordenado cuando el hosting reinicia o detiene el proceso.
 function shutdown() {

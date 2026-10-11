@@ -58,7 +58,7 @@
     return `<article class="product-card"><a href="producto.html?id=${p.id}" aria-label="Ver ${e(p.name)}">${C.photo(p)}</a><div class="product-info">${p.custom ? '<span class="badge">Personalizable</span>' : ""}<h3><a href="producto.html?id=${p.id}">${e(p.name)}</a></h3><p class="price">${p.sale ? `<del>${money(p.price)}</del>` : ""}${money(C.price(p))}</p><a class="text-link" href="producto.html?id=${p.id}">Ver producto &nbsp; →</a></div></article>`;
   }
   // Muestra el mensaje y un botón que lo abre en WhatsApp con el número de Caberti.
-  function preview(text, title = "Tu mensaje para Caberti", note) {
+  function preview(text, title = "Tu mensaje para CabertiStack", note) {
     const dialog = $("#request-dialog"),
       url = C.whatsappUrl(text);
     $("#request-title").textContent = title;
@@ -67,8 +67,8 @@
     dialog.querySelector("p.muted.small").textContent =
       note ||
       (url
-        ? "Revisa el mensaje y ábrelo en WhatsApp para enviarlo a Caberti."
-        : "El número de WhatsApp de Caberti aún no está configurado. Selecciona el mensaje y envíalo por tu cuenta.");
+        ? "Revisa el mensaje y ábrelo en WhatsApp para enviarlo a CabertiStack."
+        : "El número de WhatsApp de CabertiStack aún no está configurado. Selecciona el mensaje y envíalo por tu cuenta.");
     let link = $("#open-whatsapp");
     if (!link) {
       link = document.createElement("a");
@@ -152,12 +152,12 @@
         '<div class="empty"><h1>Producto no disponible</h1><p>Explora otros detalles en nuestro catálogo.</p><a class="btn" href="catalogo.html">Volver al catálogo</a></div>';
       return;
     }
-    document.title = p.name + " | Caberti";
+    document.title = p.name + " | CabertiStack";
     $("#product-breadcrumb").textContent = p.name;
     const pics = (p.images || []).map(C.assetUrl).filter(Boolean);
     let color = "Crema";
     $("#product-content").innerHTML =
-      `<div class="detail-layout"><div><div class="gallery-main"><img id="gallery-image" src="${e(pics[0] || "/assets/productos/02.jpg")}" alt="${e(p.name)}"></div><div class="thumbs">${pics.map((src, i) => `<button type="button" class="thumb ${i === 0 ? "selected" : ""}" data-picture="${i}" aria-label="Ver fotografía ${i + 1}" aria-pressed="${i === 0}"><img src="${e(src)}" alt=""></button>`).join("")}</div><p class="note">Fotografías proporcionadas por Caberti.</p></div><div class="detail-info"><p class="eyebrow">${e(p.category)}</p><h1>${e(p.name)}</h1><div class="row"><p class="price">${money(C.price(p))}</p><span class="badge ${p.stock > 0 ? "green" : "gray"}">${p.stock > 0 ? "Disponible" : "Agotado"}</span></div><p class="muted">${e(p.description)}</p><hr class="divider"><form id="product-form">${p.id === 2 ? '<span class="small">Color de ejemplo</span><div class="swatches"><button type="button" class="swatch" data-color="Crema" aria-pressed="true"><i class="color-cream"></i>Crema</button><button type="button" class="swatch" data-color="Rosa" aria-pressed="false"><i class="color-rose"></i>Rosa</button><button type="button" class="swatch" data-color="Negro" aria-pressed="false"><i class="color-black"></i>Negro</button></div>' : ""}${p.custom ? '<label class="field">¿Cómo lo personalizamos?<textarea id="custom-text" maxlength="250" placeholder="Nombre, frase, ocasión o idea para tu regalo"></textarea><small>Opcional. Confirmaremos contigo las opciones y el diseño.</small></label>' : ""}<div class="quantity-row"><span class="small">Cantidad</span><div class="qty"><button type="button" id="qty-down" aria-label="Disminuir cantidad">−</button><input id="product-qty" type="number" min="1" max="${Math.max(1, p.stock)}" value="1" aria-label="Cantidad"><button type="button" id="qty-up" aria-label="Aumentar cantidad">+</button></div></div><div class="actions"><button class="btn" ${p.stock < 1 ? "disabled" : ""}>${C.icon("bag")} Agregar a mi pedido</button><button type="button" class="btn btn-outline" id="consult-product">Consultar</button></div><p class="note">El diseño, el costo de envío y la fecha de entrega se confirman con Caberti.</p></form><hr class="divider"><div class="row"><span class="small">${C.icon("gift")} Un detalle a tu estilo</span><span class="small">${C.icon("truck")} Entrega en Tapachula</span></div></div></div><section class="section"><div class="section-heading"><h2>También puede gustarte</h2><a class="text-link" href="catalogo.html">Ver catálogo →</a></div><div class="product-grid">${C.state.products
+      `<div class="detail-layout"><div><div class="gallery-main"><img id="gallery-image" src="${e(pics[0] || "/assets/productos/02.jpg")}" alt="${e(p.name)}"></div><div class="thumbs">${pics.map((src, i) => `<button type="button" class="thumb ${i === 0 ? "selected" : ""}" data-picture="${i}" aria-label="Ver fotografía ${i + 1}" aria-pressed="${i === 0}"><img src="${e(src)}" alt=""></button>`).join("")}</div><p class="note">Fotografías proporcionadas por CabertiStack.</p></div><div class="detail-info"><p class="eyebrow">${e(p.category)}</p><h1>${e(p.name)}</h1><div class="row"><p class="price">${money(C.price(p))}</p><span class="badge ${p.stock > 0 ? "green" : "gray"}">${p.stock > 0 ? "Disponible" : "Agotado"}</span></div><p class="muted">${e(p.description)}</p><hr class="divider"><form id="product-form">${p.id === 2 ? '<span class="small">Color de ejemplo</span><div class="swatches"><button type="button" class="swatch" data-color="Crema" aria-pressed="true"><i class="color-cream"></i>Crema</button><button type="button" class="swatch" data-color="Rosa" aria-pressed="false"><i class="color-rose"></i>Rosa</button><button type="button" class="swatch" data-color="Negro" aria-pressed="false"><i class="color-black"></i>Negro</button></div>' : ""}${p.custom ? '<label class="field">¿Cómo lo personalizamos?<textarea id="custom-text" maxlength="250" placeholder="Nombre, frase, ocasión o idea para tu regalo"></textarea><small>Opcional. Confirmaremos contigo las opciones y el diseño.</small></label>' : ""}<div class="quantity-row"><span class="small">Cantidad</span><div class="qty"><button type="button" id="qty-down" aria-label="Disminuir cantidad">−</button><input id="product-qty" type="number" min="1" max="${Math.max(1, p.stock)}" value="1" aria-label="Cantidad"><button type="button" id="qty-up" aria-label="Aumentar cantidad">+</button></div></div><div class="actions"><button class="btn" ${p.stock < 1 ? "disabled" : ""}>${C.icon("bag")} Agregar a mi pedido</button><button type="button" class="btn btn-outline" id="consult-product">Consultar</button></div><p class="note">El diseño, el costo de envío y la fecha de entrega se confirman con CabertiStack.</p></form><hr class="divider"><div class="row"><span class="small">${C.icon("gift")} Un detalle a tu estilo</span><span class="small">${C.icon("truck")} Entrega en Tapachula</span></div></div></div><section class="section"><div class="section-heading"><h2>También puede gustarte</h2><a class="text-link" href="catalogo.html">Ver catálogo →</a></div><div class="product-grid">${C.state.products
         .filter((x) => x.active && x.id !== id)
         .slice(0, 4)
         .map(card)
@@ -233,7 +233,7 @@
     });
     $("#consult-product").addEventListener("click", () =>
       preview(
-        `Hola, Caberti. Quisiera información sobre ${p.name}.\nPersonalización: ${$("#custom-text")?.value.trim() || "Por acordar"}.`,
+        `Hola, CabertiStack. Quisiera información sobre ${p.name}.\nPersonalización: ${$("#custom-text")?.value.trim() || "Por acordar"}.`,
       ),
     );
   }
@@ -344,8 +344,8 @@
         C.saveCart();
         render();
         const total = C.subtotal(order);
-        const text = `Hola, Caberti. Soy ${order.customer}. Acabo de registrar el pedido #CB-${order.id}:\n\n${order.items.map((i) => `• ${i.qty} × ${i.name} — ${money(i.price * i.qty)}${i.custom ? "\n  " + i.custom : ""}`).join("\n")}\n\nSubtotal: ${money(total)}\nEntrega: ${delivery === "domicilio" ? "A domicilio: " + address : "Recoger en punto por acordar"}\nMi contacto: ${order.phone}\nNotas: ${notes || "Ninguna"}\n\nFavor de confirmar el costo de envío y la fecha de entrega.`;
-        preview(text, `Pedido #CB-${order.id} registrado`, "Tu pedido ya quedó registrado. Envía este mensaje a Caberti por WhatsApp para confirmarlo.");
+        const text = `Hola, CabertiStack. Soy ${order.customer}. Acabo de registrar el pedido #CB-${order.id}:\n\n${order.items.map((i) => `• ${i.qty} × ${i.name} — ${money(i.price * i.qty)}${i.custom ? "\n  " + i.custom : ""}`).join("\n")}\n\nSubtotal: ${money(total)}\nEntrega: ${delivery === "domicilio" ? "A domicilio: " + address : "Recoger en punto por acordar"}\nMi contacto: ${order.phone}\nNotas: ${notes || "Ninguna"}\n\nFavor de confirmar el costo de envío y la fecha de entrega.`;
+        preview(text, `Pedido #CB-${order.id} registrado`, "Tu pedido ya quedó registrado. Envía este mensaje a CabertiStack por WhatsApp para confirmarlo.");
       } catch (error) {
         C.toast(error.message);
       } finally {
@@ -360,14 +360,14 @@
     if (!requireAccount()) return;
     const data = new FormData(ev.currentTarget);
     preview(
-      `Hola, Caberti. Quiero armar un detalle personalizado.\nOcasión: ${data.get("occasion")}\nPresupuesto aproximado: ${data.get("budget") || "Por acordar"}\nMi idea: ${data.get("idea")}\nNombre: ${data.get("name")}\nContacto: ${data.get("phone")}`,
-      "Tu idea para Caberti",
+      `Hola, CabertiStack. Quiero armar un detalle personalizado.\nOcasión: ${data.get("occasion")}\nPresupuesto aproximado: ${data.get("budget") || "Por acordar"}\nMi idea: ${data.get("idea")}\nNombre: ${data.get("name")}\nContacto: ${data.get("phone")}`,
+      "Tu idea para CabertiStack",
     );
   });
   $("[data-contact-preview]")?.addEventListener("click", () =>
     preview(
-      "Hola, Caberti. Me gustaría conocer más sobre sus productos y entregas en Tapachula.",
-      "Contactar a Caberti",
+      "Hola, CabertiStack. Me gustaría conocer más sobre sus productos y entregas en Tapachula.",
+      "Contactar a CabertiStack",
     ),
   );
   if (page === "personalizados")
