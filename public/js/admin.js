@@ -446,6 +446,115 @@
         $("#order-dialog").showModal();
     });
   }
+  if (page === "reporte") {
+    // Pedidos que ya descontaron existencias: son las ventas.
+    const SALES = ["Confirmado", "En preparación", "Entregado"];
+    const form = $("#report-form"),
+      fields = form.elements;
+    let orders = [];
+    // Día local (AAAA-MM-DD) para comparar con los campos de fecha.
+    const localDay = (value) => {
+      const d = new Date(value);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    };
+    const fullDate = (value) =>
+      new Date(value).toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    const stats = (items) =>
+      `<div class="stats report-stats">${items.map(([label, value]) => `<div class="stat"><div><span>${label}</span><strong>${value}</strong></div></div>`).join("")}</div>`;
+
+    function render() {
+      const sales = fields.type.value === "ventas",
+        from = fields.from.value,
+        to = fields.to.value;
+      fields.status.disabled = sales;
+      const status = sales ? "" : fields.status.value;
+      const rows = orders
+        .filter((o) => {
+          const day = localDay(o.date);
+          return (
+            (sales ? SALES.includes(o.status) : !status || o.status === status) &&
+            (!from || day >= from) &&
+            (!to || day <= to)
+          );
+        })
+        .reverse(); // la API los entrega del más reciente al más antiguo
+      const title = sales ? "Reporte de ventas" : "Reporte de pedidos",
+        period =
+          from || to
+            ? `${from ? "del " + fullDate(from + "T00:00") : "desde el inicio"} ${to ? "al " + fullDate(to + "T00:00") : "a la fecha"}`
+            : "todo el historial",
+        products = rows.reduce((sum, o) => sum + C.subtotal(o), 0),
+        shipping = rows.reduce((sum, o) => sum + (o.shipping || 0), 0),
+        byStatus = (list) => rows.filter((o) => list.includes(o.status)).length;
+      // El título de la página es el nombre que el navegador propone para el PDF.
+      document.title = `${title} ${from || "inicio"} a ${to || localDay(Date.now())} | CabertiStack`;
+
+      const top = new Map();
+      if (sales)
+        for (const o of rows)
+          for (const i of o.items) {
+            const entry = top.get(i.productId) ?? { name: i.name, qty: 0, amount: 0 };
+            entry.qty += i.qty;
+            entry.amount += i.qty * i.price;
+            top.set(i.productId, entry);
+          }
+
+      $("#report").innerHTML =
+        `<div class="section-heading"><div><p class="eyebrow print-only">CabertiStack</p><h2>${title}</h2><p class="muted small">Periodo: ${period}${status ? " · Estado: " + e(status) : ""} · Generado el ${fullDate(Date.now())}</p></div></div>` +
+        stats(
+          sales
+            ? [
+                ["Pedidos vendidos", rows.length],
+                ["Productos", money(products)],
+                ["Envíos", money(shipping)],
+                ["Total vendido", money(products + shipping)],
+              ]
+            : [
+                ["Pedidos", rows.length],
+                ["Pendientes", byStatus(["Pendiente"])],
+                ["Vendidos", byStatus(SALES)],
+                ["Cancelados", byStatus(["Cancelado"])],
+              ],
+        ) +
+        `<div class="table-wrap">${table(
+          ["Pedido", "Fecha", "Cliente", "Artículos", "Estado", "Subtotal", "Envío", "Total"],
+          rows
+            .map(
+              (o) =>
+                `<tr><td>#CB-${o.id}</td><td>${fullDate(o.date)}</td><td class="report-wrap">${e(o.customer)}</td><td class="report-wrap report-items">${o.items.map((i) => `${i.qty} × ${e(i.name)}`).join("<br>")}</td><td>${e(o.status)}</td><td>${money(C.subtotal(o))}</td><td>${o.shipping === null ? "Pendiente" : money(o.shipping)}</td><td>${money(C.subtotal(o) + (o.shipping || 0))}</td></tr>`,
+            )
+            .join("") +
+            (sales && rows.length
+              ? `<tr class="report-total"><td colspan="5">Total</td><td>${money(products)}</td><td>${money(shipping)}</td><td>${money(products + shipping)}</td></tr>`
+              : ""),
+        )}</div>` +
+        (top.size
+          ? `<h2>Productos más vendidos</h2><div class="table-wrap">${table(
+              ["Producto", "Unidades", "Importe"],
+              [...top.values()]
+                .sort((a, b) => b.qty - a.qty || b.amount - a.amount)
+                .slice(0, 10)
+                .map((p) => `<tr><td>${e(p.name)}</td><td>${p.qty}</td><td>${money(p.amount)}</td></tr>`)
+                .join(""),
+            )}</div>`
+          : "");
+    }
+    // Por defecto, el mes en curso.
+    const today = localDay(Date.now());
+    fields.from.value = today.slice(0, 8) + "01";
+    fields.to.value = today;
+    form.addEventListener("input", render);
+    form.addEventListener("submit", (ev) => ev.preventDefault());
+    $("#print-report").addEventListener("click", () => window.print());
+    await attempt(async () => {
+      orders = await loadOrders();
+      render();
+    });
+  }
   if (page === "pedido-admin") {
     const id = Number(new URLSearchParams(location.search).get("id")),
       states = [

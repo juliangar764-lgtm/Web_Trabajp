@@ -1928,3 +1928,116 @@ td small {
     font-size: 13px;
   }
 }
+
+/* Reportes del panel: en pantalla y al imprimir o guardar como PDF */
+
+.report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.report-controls .field {
+  margin-bottom: 0;
+}
+
+.report-hint {
+  margin: 0 0 26px;
+}
+
+.report h2 {
+  margin: 30px 0 14px;
+  font-size: 24px;
+}
+
+.report .section-heading h2 {
+  margin: 0;
+}
+
+.report-stats .stat strong {
+  font-size: 21px;
+}
+
+.report-total td {
+  font-weight: 700;
+  background: #f4eae3;
+}
+
+.report-wrap {
+  white-space: normal;
+  min-width: 130px;
+}
+
+.report-items {
+  min-width: 190px;
+}
+
+/* Conserva el sombreado de encabezados y totales al imprimir. */
+.report th,
+.report-total td {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.print-only {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .report-stats .stat {
+    padding: 14px;
+  }
+  .report-stats .stat strong {
+    font-size: 16px;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  body {
+    background: #fff;
+  }
+  .sidebar,
+  .admin-top,
+  .admin-strip,
+  .report-controls,
+  .report-hint,
+  .skip-link,
+  .toast {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  .admin-shell {
+    display: block;
+    min-height: 0;
+  }
+  .admin-main {
+    padding: 0;
+  }
+  .report .table-wrap {
+    overflow: visible;
+  }
+  .report th,
+  .report td {
+    padding: 8px 10px;
+  }
+  .report tr,
+  .report .stat {
+    break-inside: avoid;
+  }
+  .report-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .report-stats .stat {
+    padding: 12px;
+  }
+  .report-stats .stat strong {
+    font-size: 15px;
+  }
+}
