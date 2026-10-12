@@ -3,9 +3,20 @@
   "use strict";
   const CART_KEY = "caberti-carrito-v1";
 
+  // Cada cuenta tiene su propio carrito en este navegador; sin sesión no hay carrito.
+  const cartKey = () => (state.user ? `${CART_KEY}-${state.user.id}` : null);
+
   function loadCart() {
     try {
-      const cart = JSON.parse(localStorage.getItem(CART_KEY));
+      const key = cartKey();
+      if (!key) return [];
+      // Un carrito guardado antes de separarlos por cuenta pasa a la cuenta que lo abre.
+      const shared = localStorage.getItem(CART_KEY);
+      if (shared !== null) {
+        if (localStorage.getItem(key) === null) localStorage.setItem(key, shared);
+        localStorage.removeItem(CART_KEY);
+      }
+      const cart = JSON.parse(localStorage.getItem(key));
       return Array.isArray(cart) ? cart : [];
     } catch (_) {
       return []; // el almacenamiento puede estar bloqueado o el contenido dañado
@@ -16,7 +27,7 @@
     products: [],
     categories: [], // nombres, para los filtros
     categoryList: [], // {id, name}
-    cart: loadCart(),
+    cart: [], // se carga al conocer la cuenta (ver `ready`)
     user: null,
     config: { whatsappNumber: null },
   };
@@ -86,6 +97,7 @@
     const [config, session] = await Promise.all([api("/config"), api("/auth/me")]);
     state.config = config;
     state.user = session.user;
+    state.cart = loadCart();
     if (isAdminPage) return;
     const [products, categories] = await Promise.all([api("/products"), api("/categories")]);
     state.products = products;
@@ -125,8 +137,10 @@
     },
     /** Guarda el carrito en este navegador. */
     saveCart() {
+      const key = cartKey();
+      if (!key) return false;
       try {
-        localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+        localStorage.setItem(key, JSON.stringify(state.cart));
         return true;
       } catch (_) {
         this.toast("Tu pedido estará disponible solo mientras no cierres esta página.");

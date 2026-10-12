@@ -22,6 +22,7 @@ const get = async (req, res) => {
 const create = async (req, res) => {
   const { items, delivery } = req.body;
   if (!Array.isArray(items) || !items.length) throw badRequest("El pedido no tiene artículos.");
+  if (!items.every((item) => item && typeof item === "object")) throw badRequest("El pedido tiene artículos no válidos.");
   if (!["domicilio", "recoger"].includes(delivery)) throw badRequest("Tipo de entrega no válido.");
   const order = await Order.create({
     customerId: req.user.role === "admin" ? null : req.user.id, // un pedido hecho desde el panel no pertenece a la cuenta del administrador
@@ -46,7 +47,7 @@ const updateStatus = async (req, res) => {
     req.body.shipping == null || req.body.shipping === ""
       ? null
       : money(req.body.shipping, "El costo de envío", { allowZero: true });
-  res.json(await Order.updateStatus(parseId(req.params.id), { status, shipping }));
+  res.json(await Order.updateStatus(parseId(req.params.id), { status, shipping, user: req.user.name }));
 };
 
 module.exports = { list, listMine, get, create, updateStatus };

@@ -7,7 +7,13 @@ const COOKIE_NAME = "caberti_sid";
 function readCookie(header = "", name) {
   for (const part of header.split(";")) {
     const [key, ...value] = part.trim().split("=");
-    if (key === name) return decodeURIComponent(value.join("="));
+    if (key === name) {
+      try {
+        return decodeURIComponent(value.join("="));
+      } catch {
+        return null; // valor mal codificado: se trata como si no hubiera sesión
+      }
+    }
   }
   return null;
 }

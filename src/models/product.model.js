@@ -28,13 +28,21 @@ async function create(p) {
 }
 
 async function update(id, p) {
-  const { rowCount } = await db.query(
-    `UPDATE productos SET nombre=$2, categoria_id=$3, precio=$4, oferta=$5, minimo=$6,
-            personalizable=$7, destacado=$8, activo=$9, descripcion=$10, imagenes=$11
-     WHERE id = $1`,
-    [id, p.name, p.categoryId, p.price, p.sale, p.min, p.custom, p.featured, p.active, p.description, p.images],
-  );
-  return rowCount ? findById(id) : undefined;
+  const found = await db.transaction(async (client) => {
+    const { rowCount } = await client.query(
+      `UPDATE productos SET nombre=$2, categoria_id=$3, precio=$4, oferta=$5, minimo=$6,
+              personalizable=$7, destacado=$8, activo=$9, descripcion=$10, imagenes=$11
+       WHERE id = $1`,
+      [id, p.name, p.categoryId, p.price, p.sale, p.min, p.custom, p.featured, p.active, p.description, p.images],
+    );
+    // Las fotos subidas que ya no están en el producto se borran también de la base.
+    await client.query(
+      "DELETE FROM imagenes_producto WHERE producto_id = $1 AND NOT ('/api/images/' || id = ANY($2::text[]))",
+      [id, p.images],
+    );
+    return rowCount > 0;
+  });
+  return found ? findById(id) : undefined;
 }
 
 module.exports = { findAll, findById, create, update };

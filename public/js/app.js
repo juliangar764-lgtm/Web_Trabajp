@@ -53,6 +53,13 @@
         (el) => (el.textContent = C.state.cart.reduce((n, i) => n + i.qty, 0)),
       );
   }
+  // Un producto desactivado o eliminado no se puede pedir: se quita del carrito y se avisa.
+  const available = C.state.cart.filter((i) => C.product(i.productId)?.active);
+  if (available.length < C.state.cart.length) {
+    C.state.cart = available;
+    C.save();
+    C.toast("Quitamos de tu pedido un producto que ya no está disponible.");
+  }
   count();
   function card(p) {
     return `<article class="product-card"><a href="producto.html?id=${p.id}" aria-label="Ver ${e(p.name)}">${C.photo(p)}</a><div class="product-info">${p.custom ? '<span class="badge">Personalizable</span>' : ""}<h3><a href="producto.html?id=${p.id}">${e(p.name)}</a></h3><p class="price">${p.sale ? `<del>${money(p.price)}</del>` : ""}${money(C.price(p))}</p><a class="text-link" href="producto.html?id=${p.id}">Ver producto &nbsp; →</a></div></article>`;

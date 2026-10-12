@@ -37,6 +37,7 @@ Tienda con catálogo, cuentas de cliente, pedidos por WhatsApp y panel de admini
 3. Al enviar, el pedido **se guarda en la base de datos** con los precios reales del catálogo y aparece en el panel.
 4. Se abre un enlace `wa.me` al número `WHATSAPP_NUMBER` con el resumen ya escrito.
 5. En el panel (`/admin`), el administrador confirma envío y estado; al confirmar se descuentan las existencias y al cancelar se devuelven.
+6. En **Pedidos → Reportes** el administrador obtiene el reporte de ventas o de todos los pedidos por periodo y lo imprime o lo guarda como PDF desde el navegador.
 
 ## Variables de entorno
 
