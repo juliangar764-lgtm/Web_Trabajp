@@ -38,6 +38,9 @@
     account.querySelector(".account-exit")?.addEventListener("click", () => C.logout());
     cartLink.before(account);
   }
+  // El enlace al panel del pie de página solo se muestra al administrador.
+  if (C.state.user?.role === "admin")
+    document.querySelectorAll("[data-admin-link]").forEach((el) => (el.hidden = false));
   // Para agregar al pedido o personalizar hace falta una cuenta: se manda a crearla
   // (la página de registro ofrece iniciar sesión) y después se vuelve a esta misma página.
   function requireAccount() {
