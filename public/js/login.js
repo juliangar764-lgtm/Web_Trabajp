@@ -8,7 +8,7 @@ const mensajeError = document.getElementById("login-error");
 const parametros = new URLSearchParams(location.search);
 const destino = (() => {
   const valor = parametros.get("siguiente") || "";
-  return /^\/?[a-z0-9\-/]+\.html(\?[\w=&%.\-]*)?$/i.test(valor) ? "/" + valor.replace(/^\//, "") : null;
+  return /^\/?(?!\/)[a-z0-9\-/]+\.html(\?[\w=&%.\-]*)?$/i.test(valor) ? "/" + valor.replace(/^\//, "") : null;
 })();
 
 // El enlace de registro conserva el destino

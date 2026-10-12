@@ -2,6 +2,7 @@ const HttpError = require("../utils/httpError");
 
 const PG_FK_VIOLATION = "23503";
 const PG_UNIQUE_VIOLATION = "23505";
+const PG_OUT_OF_RANGE = "22003";
 
 function notFound(req, res, next) {
   if (req.path.startsWith("/api/")) return next(new HttpError(404, "Recurso no encontrado."));
@@ -13,6 +14,7 @@ function errorHandler(error, req, res, next) {
   let { status, message } = error;
   if (error.code === PG_UNIQUE_VIOLATION) [status, message] = [409, "Ya existe un registro con ese valor."];
   else if (error.code === PG_FK_VIOLATION) [status, message] = [409, "El registro está en uso o hace referencia a algo que no existe."];
+  else if (error.code === PG_OUT_OF_RANGE) [status, message] = [400, "Un número está fuera del rango permitido."];
   else if (error.type === "entity.parse.failed") [status, message] = [400, "JSON no válido."];
 
   if (!status) {

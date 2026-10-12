@@ -83,7 +83,7 @@ async function create({ customerId, customer, phone, address, delivery, notes, i
 }
 
 /** Cambia estado y envío; descuenta o devuelve existencias según corresponda. */
-async function updateStatus(id, { status, shipping }) {
+async function updateStatus(id, { status, shipping, user }) {
   await db.transaction(async (client) => {
     const order = (await client.query("SELECT aplicado AS applied FROM pedidos WHERE id = $1 FOR UPDATE", [id])).rows[0];
     if (!order) throw new HttpError(404, "Pedido no encontrado.");
@@ -104,6 +104,7 @@ async function updateStatus(id, { status, shipping }) {
           productId,
           delta: shouldApply ? -qty : qty,
           reason: `${shouldApply ? "Pedido" : "Devolución del pedido"} #CB-${id}`,
+          user,
         });
       }
     }

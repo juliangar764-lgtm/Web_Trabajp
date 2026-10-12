@@ -21,7 +21,12 @@ app.get("/health", async (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "..", "public"), { maxAge: isProduction ? "1d" : 0 }));
-app.use("/api", sameOriginOnly, express.json({ limit: "100kb" }), loadUser, apiRoutes);
+// Sin cuerpo JSON, Express deja `req.body` sin definir; los controladores esperan un objeto.
+const defaultBody = (req, res, next) => {
+  req.body ??= {};
+  next();
+};
+app.use("/api", sameOriginOnly, express.json({ limit: "100kb" }), defaultBody, loadUser, apiRoutes);
 app.use(pageRoutes);
 app.use(notFound);
 app.use(errorHandler);

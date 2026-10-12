@@ -1929,6 +1929,46 @@ td small {
   }
 }
 
+/* Panel: fotos del producto en el formulario y paginación de pedidos */
+
+.photo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.photo-list:empty {
+  display: none;
+}
+
+.photo-item {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.photo-item img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.pager[hidden] {
+  display: none;
+}
+
 /* Reportes del panel: en pantalla y al imprimir o guardar como PDF */
 
 .report-controls {

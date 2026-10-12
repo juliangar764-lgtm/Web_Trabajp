@@ -7,7 +7,7 @@ const mensajeError = document.getElementById("login-error");
 // Página a la que volver después de registrarse. Solo se aceptan rutas internas del sitio.
 const destino = (() => {
   const valor = new URLSearchParams(location.search).get("siguiente") || "";
-  return /^\/?[a-z0-9\-/]+\.html(\?[\w=&%.\-]*)?$/i.test(valor) && !/admin\//i.test(valor)
+  return /^\/?(?!\/)[a-z0-9\-/]+\.html(\?[\w=&%.\-]*)?$/i.test(valor) && !/admin\//i.test(valor)
     ? "/" + valor.replace(/^\//, "")
     : null;
 })();

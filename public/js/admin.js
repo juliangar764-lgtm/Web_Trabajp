@@ -17,6 +17,13 @@
       ),
     );
   $("#logout")?.addEventListener("click", () => C.logout());
+  // "Salir" del menú lateral también cierra la sesión antes de ir al acceso.
+  $('.side-bottom a[href$="acceso.html"]')?.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    const href = ev.currentTarget.href;
+    await C.api("/auth/logout", { method: "POST" }).catch(() => {});
+    location.href = href;
+  });
 
   const toLogin = () =>
     (location.href =
@@ -127,6 +134,23 @@
   }
   if (page === "productos") {
     const form = $("#admin-product-form");
+    let photos = []; // fotos del producto abierto en el formulario
+    function renderPhotos() {
+      $("#product-photos").innerHTML = photos
+        .map((path, i) => {
+          const src = C.assetUrl(path);
+          return src
+            ? `<span class="photo-item"><img src="${src}" alt="Foto ${i + 1}"><button class="text-link" type="button" data-photo-remove="${i}">Quitar</button></span>`
+            : "";
+        })
+        .join("");
+    }
+    $("#product-photos").addEventListener("click", (ev) => {
+      const remove = ev.target.closest("[data-photo-remove]");
+      if (!remove) return;
+      photos.splice(Number(remove.dataset.photoRemove), 1);
+      renderPhotos();
+    });
     function render() {
       const query = $("#admin-search").value.toLocaleLowerCase("es");
       $("#products-table").innerHTML = table(
@@ -153,6 +177,8 @@
         .map((c) => `<option value="${c.id}">${e(c.name)}</option>`)
         .join("");
       const p = C.product(id);
+      photos = [...(p?.images || [])];
+      renderPhotos();
       form.elements.id.value = p?.id || "";
       $("#product-dialog-title").textContent = p
         ? "Editar producto"
@@ -229,6 +255,7 @@
             custom: data.has("custom"),
             featured: data.has("featured"),
             active: data.has("active"),
+            images: photos,
           });
         const saved = original
           ? await C.api("/products/" + original.id, { method: "PUT", body })
@@ -387,25 +414,45 @@
     await attempt(refresh);
   }
   if (page === "pedidos") {
-    let orders = [];
+    const PAGE_SIZE = 25;
+    let orders = [],
+      pageIndex = 0;
     function render() {
       const query = $("#order-search").value.toLocaleLowerCase("es"),
-        status = $("#order-status").value;
+        status = $("#order-status").value,
+        found = orders.filter(
+          (o) =>
+            (!status || o.status === status) &&
+            ("cb-" + o.id + " " + o.customer)
+              .toLocaleLowerCase("es")
+              .includes(query),
+        ),
+        pages = Math.max(1, Math.ceil(found.length / PAGE_SIZE));
+      pageIndex = Math.min(pageIndex, pages - 1);
       $("#orders-table").innerHTML = table(
         ["Pedido", "Cliente", "Fecha", "Importe", "Estado", ""],
-        orderRows(
-          orders.filter(
-            (o) =>
-              (!status || o.status === status) &&
-              ("cb-" + o.id + " " + o.customer)
-                .toLocaleLowerCase("es")
-                .includes(query),
-          ),
-        ),
+        orderRows(found.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE)),
       );
+      // La paginación solo aparece cuando los pedidos no caben en una página.
+      const pager = $("#orders-pager");
+      pager.hidden = pages < 2;
+      pager.innerHTML =
+        pages < 2
+          ? ""
+          : `<button class="btn btn-outline btn-small" type="button" data-page-step="-1" ${pageIndex === 0 ? "disabled" : ""}>← Anteriores</button><span class="small">Página ${pageIndex + 1} de ${pages} · ${found.length} pedidos</span><button class="btn btn-outline btn-small" type="button" data-page-step="1" ${pageIndex === pages - 1 ? "disabled" : ""}>Siguientes →</button>`;
     }
-    $("#order-search").addEventListener("input", render);
-    $("#order-status").addEventListener("change", render);
+    const firstPage = () => {
+      pageIndex = 0;
+      render();
+    };
+    $("#order-search").addEventListener("input", firstPage);
+    $("#order-status").addEventListener("change", firstPage);
+    $("#orders-pager").addEventListener("click", (ev) => {
+      const step = ev.target.closest("[data-page-step]");
+      if (!step || step.disabled) return;
+      pageIndex += Number(step.dataset.pageStep);
+      render();
+    });
     $("#new-order").addEventListener("click", () =>
       $("#order-dialog").showModal(),
     );
