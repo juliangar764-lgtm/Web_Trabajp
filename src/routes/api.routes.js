@@ -9,6 +9,7 @@ const products = require("../controllers/product.controller");
 const images = require("../controllers/image.controller");
 const inventory = require("../controllers/inventory.controller");
 const orders = require("../controllers/order.controller");
+const customers = require("../controllers/customer.controller");
 
 const router = Router();
 
@@ -52,5 +53,9 @@ router.get("/orders", requireAdmin, orders.list);
 router.get("/orders/mine", requireLogin, orders.listMine);
 router.get("/orders/:id", requireLogin, orders.get);
 router.patch("/orders/:id/status", requireAdmin, orders.updateStatus);
+
+// Clientes registrados y sus pedidos: solo para el panel.
+router.get("/customers", requireAdmin, customers.list);
+router.get("/customers/:id", requireAdmin, customers.get);
 
 module.exports = router;

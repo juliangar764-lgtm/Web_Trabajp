@@ -60,6 +60,14 @@
   function table(headers, rows) {
     return `<table><thead><tr>${headers.map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows || `<tr><td colspan="${headers.length}">No hay registros para mostrar.</td></tr>`}</tbody></table>`;
   }
+  /** Botones de página; solo se muestran cuando los registros no caben en una. `total` es el texto del conteo. */
+  function showPager(pager, pageIndex, pages, total) {
+    pager.hidden = pages < 2;
+    pager.innerHTML =
+      pages < 2
+        ? ""
+        : `<button class="btn btn-outline btn-small" type="button" data-page-step="-1" ${pageIndex === 0 ? "disabled" : ""}>← Anteriores</button><span class="small">Página ${pageIndex + 1} de ${pages} · ${total}</span><button class="btn btn-outline btn-small" type="button" data-page-step="1" ${pageIndex === pages - 1 ? "disabled" : ""}>Siguientes →</button>`;
+  }
   function productLabel(p) {
     return `<div class="table-product">${C.photo(p)}<div>${e(p.name)}</div></div>`;
   }
@@ -96,9 +104,17 @@
 
   if (page === "resumen") {
     await attempt(async () => {
-      const [orders] = await Promise.all([loadOrders(), loadProducts()]);
+      const [orders, customers] = await Promise.all([loadOrders(), C.api("/customers"), loadProducts()]);
       const active = C.state.products.filter((p) => p.active),
-        low = active.filter((p) => p.stock < p.min);
+        low = active.filter((p) => p.stock < p.min),
+        now = new Date(),
+        // Ventas del mes en curso: pedidos que ya descontaron existencias, con su envío.
+        monthSales = orders
+          .filter((o) => {
+            const d = new Date(o.date);
+            return o.applied && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          })
+          .reduce((sum, o) => sum + C.subtotal(o) + (o.shipping || 0), 0);
       $("#stats").innerHTML = [
         ["box", "Productos activos", active.length],
         [
@@ -112,11 +128,13 @@
           orders.filter((o) => o.status === "En preparación").length,
         ],
         ["alert", "Stock bajo", low.length],
+        ["user", "Clientes", customers.length, "clientes.html"],
+        ["chart", "Ventas del mes", money(monthSales), "reporte.html", "stat-money"],
       ]
-        .map(
-          ([i, label, n]) =>
-            `<div class="stat">${C.icon(i)}<div><span>${label}</span><strong>${n}</strong></div></div>`,
-        )
+        .map(([i, label, n, href, extra = ""]) => {
+          const inner = `${C.icon(i)}<div><span>${label}</span><strong>${n}</strong></div>`;
+          return href ? `<a class="stat ${extra}" href="${href}">${inner}</a>` : `<div class="stat">${inner}</div>`;
+        })
         .join("");
       $("#recent-orders").innerHTML = table(
         ["Pedido", "Cliente", "Fecha", "Importe", "Estado", ""],
@@ -433,13 +451,7 @@
         ["Pedido", "Cliente", "Fecha", "Importe", "Estado", ""],
         orderRows(found.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE)),
       );
-      // La paginación solo aparece cuando los pedidos no caben en una página.
-      const pager = $("#orders-pager");
-      pager.hidden = pages < 2;
-      pager.innerHTML =
-        pages < 2
-          ? ""
-          : `<button class="btn btn-outline btn-small" type="button" data-page-step="-1" ${pageIndex === 0 ? "disabled" : ""}>← Anteriores</button><span class="small">Página ${pageIndex + 1} de ${pages} · ${found.length} pedidos</span><button class="btn btn-outline btn-small" type="button" data-page-step="1" ${pageIndex === pages - 1 ? "disabled" : ""}>Siguientes →</button>`;
+      showPager($("#orders-pager"), pageIndex, pages, `${found.length} pedidos`);
     }
     const firstPage = () => {
       pageIndex = 0;
@@ -601,6 +613,70 @@
       orders = await loadOrders();
       render();
     });
+  }
+  if (page === "clientes") {
+    const PAGE_SIZE = 25;
+    let customers = [],
+      pageIndex = 0;
+    function render() {
+      const query = $("#customer-search").value.trim().toLocaleLowerCase("es"),
+        found = customers.filter((c) => `${c.name} ${c.email} ${c.phone}`.toLocaleLowerCase("es").includes(query)),
+        pages = Math.max(1, Math.ceil(found.length / PAGE_SIZE));
+      pageIndex = Math.min(pageIndex, pages - 1);
+      $("#customers-table").innerHTML = table(
+        ["Cliente", "Correo", "WhatsApp", "Registro", "Pedidos", "Total comprado", ""],
+        found
+          .slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE)
+          .map(
+            (c) =>
+              `<tr><td><a class="text-link" href="cliente.html?id=${c.id}">${e(c.name)}</a></td><td>${e(c.email)}</td><td>${e(c.phone)}</td><td>${C.longDate(c.createdAt)}</td><td>${c.orders}</td><td>${money(c.spent)}</td><td><a class="text-link" href="cliente.html?id=${c.id}">Ver pedidos →</a></td></tr>`,
+          )
+          .join(""),
+      );
+      showPager($("#customers-pager"), pageIndex, pages, `${found.length} clientes`);
+    }
+    $("#customer-search").addEventListener("input", () => {
+      pageIndex = 0;
+      render();
+    });
+    $("#customers-pager").addEventListener("click", (ev) => {
+      const step = ev.target.closest("[data-page-step]");
+      if (!step || step.disabled) return;
+      pageIndex += Number(step.dataset.pageStep);
+      render();
+    });
+    await attempt(async () => {
+      customers = await C.api("/customers");
+      render();
+    });
+  }
+  if (page === "cliente-admin") {
+    const id = Number(new URLSearchParams(location.search).get("id"));
+    let data;
+    try {
+      if (!Number.isInteger(id) || id < 1) throw new Error("Cliente no válido.");
+      data = await C.api("/customers/" + id);
+    } catch (_) {
+      $("#customer-detail").innerHTML =
+        '<div class="empty"><h2>No encontramos este cliente</h2><a class="btn" href="clientes.html">Volver a clientes</a></div>';
+      return;
+    }
+    const { customer: c, orders } = data,
+      digits = String(c.phone || "").replace(/\D/g, ""),
+      whatsapp =
+        digits.length < 10
+          ? ""
+          : `<p><a class="text-link" href="https://wa.me/${digits.length === 10 ? "52" + digits : digits}" target="_blank" rel="noopener">Escribir por WhatsApp →</a></p>`;
+    $("#customer-detail").innerHTML =
+      `<div class="section-heading"><div><h2>${e(c.name)}</h2><p class="muted small">Cliente desde el ${C.longDate(c.createdAt)}</p></div></div><div class="stack"><div class="form-row"><section class="panel"><h2>Contacto</h2><p>${e(c.email)}</p><p class="muted small">${e(c.phone) || "Sin teléfono"}</p>${whatsapp}</section><section class="panel"><h2>Compras</h2><div class="row small"><span>Pedidos</span><strong>${c.orders}</strong></div><hr class="divider"><div class="row small"><span>Total comprado</span><strong>${money(c.spent)}</strong></div><p class="note">El total suma los pedidos confirmados, en preparación o entregados, con su envío.</p></section></div><section class="panel"><h2>Pedidos</h2><div class="table-wrap">${table(
+        ["Pedido", "Fecha", "Artículos", "Importe", "Pago", "Estado", ""],
+        orders
+          .map(
+            (o) =>
+              `<tr><td><a class="text-link" href="pedido.html?id=${o.id}">#CB-${o.id}</a></td><td>${C.longDate(o.date)}</td><td class="report-wrap report-items">${o.items.map((i) => `${i.qty} × ${e(i.name)}`).join("<br>")}</td><td>${money(C.subtotal(o) + (o.shipping || 0))}${o.shipping === null ? "<small>Envío pendiente</small>" : ""}</td><td>${C.payment(o.payment)}</td><td>${C.badge(o.status)}</td><td><a class="text-link" href="/comprobante.html?id=${o.id}" target="_blank" rel="noopener">Comprobante →</a></td></tr>`,
+          )
+          .join(""),
+      )}</div></section></div>`;
   }
   if (page === "pedido-admin") {
     const id = Number(new URLSearchParams(location.search).get("id")),

@@ -77,6 +77,7 @@ Seguridad incluida: contraseñas con scrypt, sesiones con token aleatorio guarda
 | Inventario | `GET/POST /api/inventory/movements` | Admin |
 | Pedidos | `POST /api/orders`, `GET /api/orders/mine`, `GET /api/orders/:id` | Cliente con sesión (solo ve los suyos) |
 | Pedidos | `GET /api/orders`, `PATCH /api/orders/:id/status` | Admin |
+| Clientes | `GET /api/customers`, `GET /api/customers/:id` (datos y pedidos de un cliente) | Admin |
 
 ## Pendiente
 

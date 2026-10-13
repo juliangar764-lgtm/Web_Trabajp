@@ -1969,6 +1969,29 @@ td small {
   display: none;
 }
 
+/* Resumen del panel con seis tarjetas (dos de ellas enlazan a Clientes y a Reportes) */
+
+.stats-six {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+a.stat:hover {
+  border-color: var(--brand);
+}
+
+.stat-money strong {
+  font-size: 26px;
+}
+
+@media (max-width: 1100px) {
+  .stats-six {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-money strong {
+    font-size: 20px;
+  }
+}
+
 /* Comprobante de compra y lista de pedidos del cliente */
 
 .receipt {
