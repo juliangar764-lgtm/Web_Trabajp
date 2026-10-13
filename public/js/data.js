@@ -195,6 +195,18 @@
         }[status] || "";
       return `<span class="badge ${cls}">${escape(status)}</span>`;
     },
+    /** Fecha con año, para comprobantes y listados. */
+    longDate(value) {
+      return new Date(value).toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    },
+    /** Nombre visible de la forma de pago de un pedido. */
+    payment(value) {
+      return value === "transferencia" ? "Transferencia" : "Efectivo";
+    },
     subtotal(order) {
       return order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
     },

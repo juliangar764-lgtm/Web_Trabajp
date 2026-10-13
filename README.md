@@ -37,7 +37,10 @@ Tienda con catálogo, cuentas de cliente, pedidos por WhatsApp y panel de admini
 3. Al enviar, el pedido **se guarda en la base de datos** con los precios reales del catálogo y aparece en el panel.
 4. Se abre un enlace `wa.me` al número `WHATSAPP_NUMBER` con el resumen ya escrito.
 5. En el panel (`/admin`), el administrador confirma envío y estado; al confirmar se descuentan las existencias y al cancelar se devuelven.
-6. En **Pedidos → Reportes** el administrador obtiene el reporte de ventas o de todos los pedidos por periodo y lo imprime o lo guarda como PDF desde el navegador.
+6. Al enviar el pedido el cliente elige la forma de pago (efectivo o transferencia). El pago no se cobra en la web: solo se anota, y el administrador puede corregirlo en el detalle del pedido. Cada pedido tiene un **comprobante** (`comprobante.html?id=…`) que el cliente y el administrador pueden imprimir o guardar como PDF.
+7. En **Pedidos → Reportes** el administrador obtiene el reporte de ventas o de todos los pedidos por periodo y lo imprime o lo guarda como PDF desde el navegador.
+
+El servidor aplica `database/schema.sql` al arrancar (es idempotente), así que las tablas o columnas nuevas se crean solas en cada despliegue sin tocar los datos.
 
 ## Variables de entorno
 

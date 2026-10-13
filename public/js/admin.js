@@ -628,12 +628,12 @@
     function render() {
       const subtotal = C.subtotal(o);
       $("#admin-order-detail").innerHTML =
-        `<div class="section-heading"><div><h2>Pedido #CB-${o.id}</h2><p class="muted small">${C.date(o.date)}</p></div>${C.badge(o.status)}</div><div class="admin-grid"><div class="stack"><section class="panel"><h2>Artículos del pedido</h2><div class="table-wrap">${table(["Producto", "Cantidad", "Precio unitario", "Importe"], o.items.map((i) => `<tr><td><div class="table-product">${C.photo(i)}<div>${e(i.name)}<small>${e(i.custom)}</small></div></div></td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty * i.price)}</td></tr>`).join(""))}</div></section><div class="form-row"><section class="panel"><h2>Cliente</h2><p>${e(o.customer)}</p><p class="muted small">${e(o.phone) || "Sin teléfono"}</p>${whatsappLink()}</section><section class="panel"><h2>Entrega</h2><p>${o.delivery === "domicilio" ? "A domicilio" : "Recoger en punto acordado"}</p><p class="muted small">${e(o.address)}</p><p class="small">${e(o.notes)}</p></section></div></div><form class="panel" id="order-update-form"><h2>Resumen del pedido</h2><div class="row small"><span>Productos</span><strong>${money(subtotal)}</strong></div><hr class="divider"><label class="field">Costo de envío (MXN)<input name="shipping" id="shipping-input" type="number" min="0" max="999999" step="0.01" value="${o.shipping ?? ""}" placeholder="Por confirmar"></label><div class="row"><strong>Total final</strong><strong id="final-total">${o.shipping === null ? "Por confirmar" : money(subtotal + o.shipping)}</strong></div><hr class="divider"><h2>Actualizar estado</h2><label class="field">Estado<select name="status">${states.map((s) => `<option ${o.status === s ? "selected" : ""}>${s}</option>`).join("")}</select></label><ul class="timeline">${states
+        `<div class="section-heading"><div><h2>Pedido #CB-${o.id}</h2><p class="muted small">${C.date(o.date)}</p></div>${C.badge(o.status)}</div><div class="admin-grid"><div class="stack"><section class="panel"><h2>Artículos del pedido</h2><div class="table-wrap">${table(["Producto", "Cantidad", "Precio unitario", "Importe"], o.items.map((i) => `<tr><td><div class="table-product">${C.photo(i)}<div>${e(i.name)}<small>${e(i.custom)}</small></div></div></td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty * i.price)}</td></tr>`).join(""))}</div></section><div class="form-row"><section class="panel"><h2>Cliente</h2><p>${e(o.customer)}</p><p class="muted small">${e(o.phone) || "Sin teléfono"}</p>${whatsappLink()}</section><section class="panel"><h2>Entrega</h2><p>${o.delivery === "domicilio" ? "A domicilio" : "Recoger en punto acordado"}</p><p class="muted small">${e(o.address)}</p><p class="small">${e(o.notes)}</p><p class="small">Forma de pago: <strong>${C.payment(o.payment)}</strong></p></section></div></div><form class="panel" id="order-update-form"><h2>Resumen del pedido</h2><div class="row small"><span>Productos</span><strong>${money(subtotal)}</strong></div><hr class="divider"><label class="field">Costo de envío (MXN)<input name="shipping" id="shipping-input" type="number" min="0" max="999999" step="0.01" value="${o.shipping ?? ""}" placeholder="Por confirmar"></label><div class="row"><strong>Total final</strong><strong id="final-total">${o.shipping === null ? "Por confirmar" : money(subtotal + o.shipping)}</strong></div><hr class="divider"><h2>Actualizar estado</h2><label class="field">Estado<select name="status">${states.map((s) => `<option ${o.status === s ? "selected" : ""}>${s}</option>`).join("")}</select></label><label class="field">Forma de pago<select name="payment">${["efectivo", "transferencia"].map((p) => `<option value="${p}" ${o.payment === p ? "selected" : ""}>${C.payment(p)}</option>`).join("")}</select></label><ul class="timeline">${states
           .slice(0, 4)
           .map((s) => `<li class="${o.status === s ? "active" : ""}">${s}</li>`)
           .join(
             "",
-          )}</ul><button class="btn full">Guardar cambios</button><p class="note">Al confirmar el pedido se descuentan las existencias; si se cancela, se devuelven.</p></form></div>`;
+          )}</ul><button class="btn full">Guardar cambios</button><p><a class="text-link" href="/comprobante.html?id=${o.id}" target="_blank" rel="noopener">Ver comprobante →</a></p><p class="note">Al confirmar el pedido se descuentan las existencias; si se cancela, se devuelven.</p></form></div>`;
       $("#shipping-input").addEventListener("input", (ev) => {
         $("#final-total").textContent =
           ev.target.value === ""
@@ -644,6 +644,7 @@
         ev.preventDefault();
         const data = new FormData(ev.currentTarget),
           status = String(data.get("status")),
+          payment = String(data.get("payment")),
           shipping =
             data.get("shipping") === "" ? null : Number(data.get("shipping"));
         if (shipping !== null && (!Number.isFinite(shipping) || shipping < 0)) {
@@ -653,7 +654,7 @@
         attempt(async () => {
           o = await C.api(`/orders/${o.id}/status`, {
             method: "PATCH",
-            body: { status, shipping },
+            body: { status, shipping, payment },
           });
           render();
           C.toast("Pedido actualizado.");

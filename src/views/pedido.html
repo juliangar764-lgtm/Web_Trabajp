@@ -117,6 +117,31 @@
                     placeholder="Horario, dedicatoria o algo que debamos saber"
                   ></textarea>
                 </label>
+                <fieldset class="layout-5">
+                  <legend class="small">Forma de pago</legend>
+                  <div class="delivery-options">
+                    <label
+                      ><input
+                        type="radio"
+                        name="payment"
+                        value="efectivo"
+                        checked
+                      />
+                      Efectivo</label
+                    ><label
+                      ><input
+                        type="radio"
+                        name="payment"
+                        value="transferencia"
+                      />
+                      Transferencia</label
+                    >
+                  </div>
+                </fieldset>
+                <p class="note">
+                  El pago se hace directamente con CabertiStack al confirmar tu
+                  pedido; en esta página no se cobra nada.
+                </p>
                 <p class="note" id="checkout-note"></p>
               </section>
             </div>
@@ -144,6 +169,10 @@
             </aside>
           </form>
         </div>
+        <section class="section" id="my-orders" hidden>
+          <div class="section-heading"><h2>Mis pedidos</h2></div>
+          <div class="table-wrap" id="my-orders-table"></div>
+        </section>
       </div>
     </main>
     <footer class="site-footer">

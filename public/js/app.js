@@ -68,7 +68,7 @@
     return `<article class="product-card"><a href="producto.html?id=${p.id}" aria-label="Ver ${e(p.name)}">${C.photo(p)}</a><div class="product-info">${p.custom ? '<span class="badge">Personalizable</span>' : ""}<h3><a href="producto.html?id=${p.id}">${e(p.name)}</a></h3><p class="price">${p.sale ? `<del>${money(p.price)}</del>` : ""}${money(C.price(p))}</p><a class="text-link" href="producto.html?id=${p.id}">Ver producto &nbsp; →</a></div></article>`;
   }
   // Muestra el mensaje y un botón que lo abre en WhatsApp con el número de Caberti.
-  function preview(text, title = "Tu mensaje para CabertiStack", note) {
+  function preview(text, title = "Tu mensaje para CabertiStack", note, receiptUrl) {
     const dialog = $("#request-dialog"),
       url = C.whatsappUrl(text);
     $("#request-title").textContent = title;
@@ -91,6 +91,19 @@
     }
     link.hidden = !url;
     if (url) link.href = url;
+    // Tras registrar un pedido, el diálogo ofrece también su comprobante.
+    let receipt = $("#open-receipt");
+    if (!receipt) {
+      receipt = document.createElement("a");
+      receipt.id = "open-receipt";
+      receipt.className = "btn btn-outline";
+      receipt.target = "_blank";
+      receipt.rel = "noopener";
+      receipt.textContent = "Ver comprobante";
+      link.after(receipt);
+    }
+    receipt.hidden = !receiptUrl;
+    if (receiptUrl) receipt.href = receiptUrl;
     dialog.showModal();
   }
   $("[data-close-dialog]")?.addEventListener("click", () =>
@@ -315,6 +328,20 @@
     $("#checkout-note").innerHTML = user
       ? `Pedido a nombre de <strong>${e(user.email)}</strong>. Se guarda en tu cuenta y luego lo envías por WhatsApp.`
       : 'Para enviar tu pedido necesitas una cuenta. <a class="text-link" href="/acceso.html?siguiente=pedido.html">Inicia sesión</a> o <a class="text-link" href="/registro.html?siguiente=pedido.html">crea una cuenta</a>.';
+    // Pedidos anteriores de la cuenta, cada uno con su comprobante.
+    async function loadMyOrders() {
+      if (!C.state.user) return;
+      const orders = await C.api("/orders/mine").catch(() => []);
+      $("#my-orders").hidden = !orders.length;
+      $("#my-orders-table").innerHTML =
+        `<table><thead><tr><th scope="col">Pedido</th><th scope="col">Fecha</th><th scope="col">Importe</th><th scope="col">Estado</th><th scope="col"></th></tr></thead><tbody>${orders
+          .map(
+            (o) =>
+              `<tr><td>#CB-${o.id}</td><td>${C.longDate(o.date)}</td><td>${money(C.subtotal(o) + (o.shipping || 0))}${o.shipping === null ? "<small>Envío pendiente</small>" : ""}</td><td>${C.badge(o.status)}</td><td><a class="text-link" href="comprobante.html?id=${o.id}">Comprobante →</a></td></tr>`,
+          )
+          .join("")}</tbody></table>`;
+    }
+    loadMyOrders();
     $("#checkout-form").addEventListener("submit", async (ev) => {
       ev.preventDefault();
       if (!C.state.user) {
@@ -324,6 +351,7 @@
       const name = $("#customer-name").value.trim(),
         phone = $("#customer-phone").value.trim(),
         delivery = $("[name=delivery]:checked").value,
+        payment = $("[name=payment]:checked").value,
         address = $("#customer-address").value.trim(),
         notes = $("#customer-notes").value.trim();
       if (!name || phone.replace(/\D/g, "").length < 10) {
@@ -345,6 +373,7 @@
             customer: name,
             phone,
             delivery,
+            payment,
             address: delivery === "domicilio" ? address : "",
             notes,
             items: C.state.cart.map((i) => ({ productId: i.productId, qty: i.qty, custom: i.custom })),
@@ -354,8 +383,9 @@
         C.saveCart();
         render();
         const total = C.subtotal(order);
-        const text = `Hola, CabertiStack. Soy ${order.customer}. Acabo de registrar el pedido #CB-${order.id}:\n\n${order.items.map((i) => `• ${i.qty} × ${i.name} — ${money(i.price * i.qty)}${i.custom ? "\n  " + i.custom : ""}`).join("\n")}\n\nSubtotal: ${money(total)}\nEntrega: ${delivery === "domicilio" ? "A domicilio: " + address : "Recoger en punto por acordar"}\nMi contacto: ${order.phone}\nNotas: ${notes || "Ninguna"}\n\nFavor de confirmar el costo de envío y la fecha de entrega.`;
-        preview(text, `Pedido #CB-${order.id} registrado`, "Tu pedido ya quedó registrado. Envía este mensaje a CabertiStack por WhatsApp para confirmarlo.");
+        const text = `Hola, CabertiStack. Soy ${order.customer}. Acabo de registrar el pedido #CB-${order.id}:\n\n${order.items.map((i) => `• ${i.qty} × ${i.name} — ${money(i.price * i.qty)}${i.custom ? "\n  " + i.custom : ""}`).join("\n")}\n\nSubtotal: ${money(total)}\nEntrega: ${delivery === "domicilio" ? "A domicilio: " + address : "Recoger en punto por acordar"}\nForma de pago: ${C.payment(order.payment)}\nMi contacto: ${order.phone}\nNotas: ${notes || "Ninguna"}\n\nFavor de confirmar el costo de envío y la fecha de entrega.`;
+        preview(text, `Pedido #CB-${order.id} registrado`, "Tu pedido ya quedó registrado. Envía este mensaje a CabertiStack por WhatsApp para confirmarlo.", `comprobante.html?id=${order.id}`);
+        loadMyOrders();
       } catch (error) {
         C.toast(error.message);
       } finally {
@@ -363,6 +393,30 @@
       }
     });
     render();
+  }
+  if (page === "comprobante") {
+    const id = Number(new URLSearchParams(location.search).get("id"));
+    if (!C.state.user) {
+      location.href = "/acceso.html?siguiente=" + encodeURIComponent("comprobante.html?id=" + id);
+      return;
+    }
+    const isAdmin = C.state.user.role === "admin";
+    let o;
+    try {
+      if (!Number.isInteger(id) || id < 1) throw new Error("Pedido no válido.");
+      o = await C.api("/orders/" + id); // el servidor solo entrega los pedidos propios (o todos al administrador)
+    } catch (_) {
+      $("#receipt").innerHTML =
+        '<div class="empty receipt-missing"><h1>No encontramos este pedido</h1><p>Revisa que el enlace sea el de uno de tus pedidos.</p><a class="btn" href="pedido.html">Ver mis pedidos</a></div>';
+      return;
+    }
+    const subtotal = C.subtotal(o);
+    // El título de la página es el nombre que el navegador propone para el PDF.
+    document.title = `Comprobante CB-${o.id} | CabertiStack`;
+    $("#receipt").innerHTML =
+      `<article class="panel receipt"><header class="receipt-head"><div><p class="eyebrow">CabertiStack</p><h1>Comprobante de compra</h1><p class="muted small">Pedido #CB-${o.id} · ${C.longDate(o.date)}</p></div>${C.badge(o.status)}</header><div class="receipt-data"><div><span class="muted small">Cliente</span><strong>${e(o.customer)}</strong><span class="small">${e(o.phone)}</span></div><div><span class="muted small">Entrega</span><strong>${o.delivery === "domicilio" ? "A domicilio" : "Recoger en punto acordado"}</strong><span class="small">${e(o.address)}</span></div><div><span class="muted small">Forma de pago</span><strong>${C.payment(o.payment)}</strong></div></div><div class="table-wrap"><table><thead><tr><th scope="col">Artículo</th><th scope="col">Cantidad</th><th scope="col">Precio unitario</th><th scope="col">Importe</th></tr></thead><tbody>${o.items.map((i) => `<tr><td class="report-wrap">${e(i.name)}${i.custom ? `<small>${e(i.custom)}</small>` : ""}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty * i.price)}</td></tr>`).join("")}</tbody></table></div><div class="receipt-totals"><div class="row"><span>Productos</span><span>${money(subtotal)}</span></div><div class="row"><span>Envío</span><span>${o.shipping === null ? "Por confirmar" : money(o.shipping)}</span></div><div class="row total"><strong>${o.shipping === null ? "Subtotal" : "Total"}</strong><strong>${money(subtotal + (o.shipping || 0))}</strong></div></div><p class="note">El pago se realiza directamente con CabertiStack, en efectivo o por transferencia. Este comprobante no es una factura.</p></article><div class="receipt-actions"><button class="btn" type="button" id="print-receipt">Imprimir o guardar PDF</button><a class="btn btn-outline" href="${isAdmin ? "/admin/pedido.html?id=" + o.id : "pedido.html"}">${isAdmin ? "Volver al pedido" : "Ver mis pedidos"}</a></div>`;
+    $("#print-receipt").addEventListener("click", () => window.print());
+    return;
   }
   if (page === "personalizados" && !requireAccount()) return;
   $("#custom-request-form")?.addEventListener("submit", (ev) => {

@@ -19,6 +19,13 @@ const get = async (req, res) => {
   res.json(order);
 };
 
+/** Forma de pago enviada por el cliente; `fallback` es el valor cuando no se indica. */
+function parsePayment(value, fallback) {
+  if (value == null || value === "") return fallback;
+  if (!Order.PAYMENTS.includes(value)) throw badRequest("Forma de pago no válida.");
+  return value;
+}
+
 const create = async (req, res) => {
   const { items, delivery } = req.body;
   if (!Array.isArray(items) || !items.length) throw badRequest("El pedido no tiene artículos.");
@@ -30,6 +37,7 @@ const create = async (req, res) => {
     phone: text(req.body.phone || req.user.phone, "El teléfono", { max: 30, required: false }),
     address: text(req.body.address, "La dirección", { max: 255, required: false }),
     delivery,
+    payment: parsePayment(req.body.payment, "efectivo"),
     notes: text(req.body.notes, "Las notas", { max: 500, required: false }),
     items: items.map((item) => ({
       productId: parseId(item.productId),
@@ -47,7 +55,9 @@ const updateStatus = async (req, res) => {
     req.body.shipping == null || req.body.shipping === ""
       ? null
       : money(req.body.shipping, "El costo de envío", { allowZero: true });
-  res.json(await Order.updateStatus(parseId(req.params.id), { status, shipping, user: req.user.name }));
+  // Sin forma de pago en la petición se conserva la que ya tenía el pedido.
+  const payment = parsePayment(req.body.payment, null);
+  res.json(await Order.updateStatus(parseId(req.params.id), { status, shipping, payment, user: req.user.name }));
 };
 
 module.exports = { list, listMine, get, create, updateStatus };

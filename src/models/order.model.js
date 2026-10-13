@@ -5,10 +5,12 @@ const { applyMovement } = require("./inventory.model");
 const STATUSES = ["Pendiente", "Confirmado", "En preparación", "Entregado", "Cancelado"];
 // En estos estados el pedido ya reservó existencias.
 const STOCK_STATUSES = ["Confirmado", "En preparación", "Entregado"];
+// El pago se acuerda con la tienda; aquí solo se anota para el comprobante.
+const PAYMENTS = ["efectivo", "transferencia"];
 
 // Las columnas están en español; los alias mantienen las claves JSON que usa el frontend.
 const ORDER_COLUMNS = `id, cliente_id AS "customerId", cliente AS customer, telefono AS phone, direccion AS address,
-  entrega AS delivery, notas AS notes, estado AS status, envio::float8 AS shipping,
+  entrega AS delivery, notas AS notes, estado AS status, envio::float8 AS shipping, forma_pago AS payment,
   aplicado AS applied, creado_en AS date`;
 
 async function attachItems(orders) {
@@ -45,7 +47,7 @@ async function findById(id) {
 }
 
 /** Crea un pedido. Nombre y precio se toman de la base de datos, no del cliente. */
-async function create({ customerId, customer, phone, address, delivery, notes, items }) {
+async function create({ customerId, customer, phone, address, delivery, payment, notes, items }) {
   const id = await db.transaction(async (client) => {
     // Revisión rápida de existencias por producto; la reserva real ocurre al confirmar el pedido.
     const wanted = new Map();
@@ -59,9 +61,9 @@ async function create({ customerId, customer, phone, address, delivery, notes, i
       }
     }
     const { rows } = await client.query(
-      `INSERT INTO pedidos (cliente_id, cliente, telefono, direccion, entrega, notas)
-       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-      [customerId, customer, phone, address, delivery, notes],
+      `INSERT INTO pedidos (cliente_id, cliente, telefono, direccion, entrega, notas, forma_pago)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+      [customerId, customer, phone, address, delivery, notes, payment],
     );
     for (const item of items) {
       const product = (
@@ -82,8 +84,8 @@ async function create({ customerId, customer, phone, address, delivery, notes, i
   return findById(id);
 }
 
-/** Cambia estado y envío; descuenta o devuelve existencias según corresponda. */
-async function updateStatus(id, { status, shipping, user }) {
+/** Cambia estado, envío y (si se indica) forma de pago; descuenta o devuelve existencias según corresponda. */
+async function updateStatus(id, { status, shipping, payment = null, user }) {
   await db.transaction(async (client) => {
     const order = (await client.query("SELECT aplicado AS applied FROM pedidos WHERE id = $1 FOR UPDATE", [id])).rows[0];
     if (!order) throw new HttpError(404, "Pedido no encontrado.");
@@ -108,14 +110,12 @@ async function updateStatus(id, { status, shipping, user }) {
         });
       }
     }
-    await client.query("UPDATE pedidos SET estado = $2, envio = $3, aplicado = $4 WHERE id = $1", [
-      id,
-      status,
-      shipping,
-      shouldApply,
-    ]);
+    await client.query(
+      "UPDATE pedidos SET estado = $2, envio = $3, aplicado = $4, forma_pago = COALESCE($5, forma_pago) WHERE id = $1",
+      [id, status, shipping, shouldApply, payment],
+    );
   });
   return findById(id);
 }
 
-module.exports = { STATUSES, findAll, findByCustomerId, findById, create, updateStatus };
+module.exports = { STATUSES, PAYMENTS, findAll, findByCustomerId, findById, create, updateStatus };

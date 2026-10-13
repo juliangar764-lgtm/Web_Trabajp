@@ -72,11 +72,15 @@ CREATE TABLE IF NOT EXISTS pedidos (
   estado    text NOT NULL DEFAULT 'Pendiente'
             CHECK (estado IN ('Pendiente', 'Confirmado', 'En preparación', 'Entregado', 'Cancelado')),
   envio     numeric(10,2) CHECK (envio >= 0),
+  forma_pago text NOT NULL DEFAULT 'efectivo' CHECK (forma_pago IN ('efectivo', 'transferencia')),
   aplicado  boolean NOT NULL DEFAULT false, -- true si el pedido ya descontó existencias
   creado_en timestamptz NOT NULL DEFAULT now()
 );
 -- Para bases creadas antes de existir la cuenta de cliente.
 ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS cliente_id bigint REFERENCES clientes (id) ON DELETE SET NULL;
+-- Para bases creadas antes de registrar la forma de pago. El pago no se cobra en la web: solo se anota.
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS forma_pago text NOT NULL DEFAULT 'efectivo'
+  CHECK (forma_pago IN ('efectivo', 'transferencia'));
 CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos (estado);
 CREATE INDEX IF NOT EXISTS idx_pedidos_cliente_id ON pedidos (cliente_id);
 
