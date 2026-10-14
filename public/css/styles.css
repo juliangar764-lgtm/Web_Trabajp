@@ -1981,6 +1981,12 @@ td small {
   margin-bottom: 14px;
 }
 
+/* Las iniciales del lema forman el nombre de la tienda: C-A-B-E-R-T-I. */
+.hero-tagline b {
+  color: var(--brand);
+  font-weight: 700;
+}
+
 @media (max-width: 760px) {
   .hero p.hero-tagline {
     font-size: 17px;
