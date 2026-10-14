@@ -37,6 +37,15 @@
       : `<a class="account-link" href="/acceso.html?siguiente=${encodeURIComponent((location.pathname.slice(1) || "index.html") + location.search)}">Ingresar</a>`;
     account.querySelector(".account-exit")?.addEventListener("click", () => C.logout());
     cartLink.before(account);
+    // En pantallas medianas y chicas «Salir» se muestra dentro del menú desplegable (ver CSS).
+    if (user) {
+      const exit = document.createElement("button");
+      exit.type = "button";
+      exit.className = "nav-exit";
+      exit.textContent = "Salir";
+      exit.addEventListener("click", () => C.logout());
+      $("#main-nav")?.append(exit);
+    }
   }
   // El enlace al panel del pie de página solo se muestra al administrador.
   if (C.state.user?.role === "admin")

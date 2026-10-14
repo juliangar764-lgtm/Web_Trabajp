@@ -2227,3 +2227,114 @@ a.stat:hover {
     font-size: 15px;
   }
 }
+
+/* Encabezado de la tienda adaptable. Hasta 960px el menú pasa al botón de tres rayas, el nombre
+   de la cuenta se recorta si es largo y «Salir» se muestra dentro del menú desplegable. */
+
+.account {
+  min-width: 0;
+}
+
+.account-link {
+  min-width: 0;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-exit {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .site-header .header-inner {
+    gap: 13px;
+  }
+  .site-header .brand,
+  .site-header .cart-link,
+  .site-header .menu-toggle {
+    flex-shrink: 0;
+  }
+  .menu-toggle {
+    display: flex;
+    order: 3;
+  }
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 15px 24px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nav.open {
+    display: flex;
+  }
+  .cart-link {
+    margin-left: auto;
+  }
+  .cart-link > span.cart-text {
+    display: none;
+  }
+  .account-link {
+    max-width: 150px;
+  }
+  .account-exit {
+    display: none;
+  }
+  .nav .nav-exit {
+    display: block;
+    margin-top: 4px;
+    padding: 12px 0 6px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 400px) {
+  .site-header .header-inner {
+    gap: 9px;
+  }
+  .site-header .brand {
+    font-size: 21px;
+    gap: 5px;
+    letter-spacing: 0.08em;
+  }
+  .site-header .brand .icon {
+    width: 21px;
+    height: 21px;
+  }
+  .site-header .account {
+    font-size: 12px;
+  }
+  .site-header .menu-toggle {
+    padding: 6px;
+  }
+  .site-header .cart-link {
+    gap: 5px;
+  }
+}
+
+@media (max-width: 340px) {
+  .site-header .brand {
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+  .site-header .brand .icon {
+    width: 18px;
+    height: 18px;
+  }
+}
