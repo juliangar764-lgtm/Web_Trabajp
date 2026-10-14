@@ -22,7 +22,15 @@ async function attachItems(orders) {
      WHERE d.pedido_id = ANY($1) ORDER BY d.id`,
     [orders.map((o) => o.id)],
   );
-  orders.forEach((o) => (o.items = rows.filter((i) => i.orderId === o.id)));
+  // Los artículos se agrupan por pedido en una sola pasada; recorrerlos todos por cada pedido
+  // hacía que el listado se volviera lento a medida que crecía el número de pedidos.
+  const byOrder = new Map();
+  for (const item of rows) {
+    const items = byOrder.get(item.orderId);
+    if (items) items.push(item);
+    else byOrder.set(item.orderId, [item]);
+  }
+  orders.forEach((o) => (o.items = byOrder.get(o.id) ?? []));
   return orders;
 }
 
