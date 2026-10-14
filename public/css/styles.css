@@ -1969,6 +1969,25 @@ td small {
   display: none;
 }
 
+/* Lema bajo el título de la página de inicio */
+
+.hero p.hero-tagline {
+  font:
+    italic 20px/1.45 Georgia,
+    "Times New Roman",
+    serif;
+  color: var(--ink);
+  max-width: 480px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 760px) {
+  .hero p.hero-tagline {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+}
+
 /* Resumen del panel con seis tarjetas (dos de ellas enlazan a Clientes y a Reportes) */
 
 .stats-six {
